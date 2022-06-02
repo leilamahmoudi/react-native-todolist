@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -13,6 +14,13 @@ import Task from "./components/Task";
 
 export default function App() {
   const [task, setTask] = useState();
+  const [taskItems, setTaskItems] = useState([]);
+
+  const handelAddTask = () => {
+    Keyboard.dismiss();
+    setTaskItems([...taskItems, task]);
+    setTask(null);
+  };
 
   return (
     <View style={styles.container}>
@@ -21,8 +29,9 @@ export default function App() {
         <Text style={styles.sectionTitle}>Today's tasks</Text>
         <View style={styles.items}>
           {/* This is where the tasks will go !*/}
-          <Task text={"task 1"} />
-          <Task text={"task 2"} />
+          {taskItems.map((item, index) => {
+            return <Task key={index} text={item} />;
+          })}
         </View>
       </View>
       {/* Write a task*/}
@@ -30,8 +39,13 @@ export default function App() {
         behavior={Platform.Os === "ios" ? "padding" : "height"}
         style={styles.writeTaskWrapper}
       >
-        <TextInput style={styles.input} placeholder="Write a task" />
-        <TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          placeholder="Write a task"
+          value={task}
+          onChangeText={(text) => setTask(text)}
+        />
+        <TouchableOpacity onPress={() => handelAddTask()}>
           <View style={styles.addWrapper}>
             <Text style={styles.addText}>+</Text>
           </View>
